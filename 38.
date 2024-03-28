@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 100
+
+void sort(int arr[], int n) {
+    int temp;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void scan(int arr[], int head, int direction, int size) {
+    int total_seek = 0;
+    int current_head = head;
+    int previous_head;
+    int visited[SIZE] = {0};
+
+    sort(arr, size);
+
+    if (direction == 0) {
+        printf("SCAN Algorithm (Moving towards left):\n");
+        printf("Seek Sequence: %d", head);
+        for (int i = head - 1; i >= 0; i--) {
+            printf(" -> %d", i);
+            total_seek += abs(current_head - i);
+            current_head = i;
+            visited[i] = 1;
+        }
+        printf(" -> 0");
+        total_seek += current_head;
+        current_head = 0;
+
+        for (int i = 1; i < size; i++) {
+            if (!visited[arr[i]]) {
+                printf(" -> %d", arr[i]);
+                total_seek += abs(current_head - arr[i]);
+                current_head = arr[i];
+                visited[arr[i]] = 1;
+            }
+        }
+    } else {
+        printf("SCAN Algorithm (Moving towards right):\n");
+        printf("Seek Sequence: %d", head);
+        for (int i = head + 1; i < SIZE; i++) {
+            printf(" -> %d", i);
+            total_seek += abs(current_head - i);
+            current_head = i;
+            visited[i] = 1;
+        }
+        printf(" -> %d", SIZE - 1);
+        total_seek += SIZE - 1 - current_head;
+        current_head = SIZE - 1;
+
+        for (int i = size - 1; i >= 0; i--) {
+            if (!visited[arr[i]]) {
+                printf(" -> %d", arr[i]);
+                total_seek += abs(current_head - arr[i]);
+                current_head = arr[i];
+                visited[arr[i]] = 1;
+            }
+        }
+    }
+
+    printf("\nTotal seek time: %d\n", total_seek);
+}
+
+int main() {
+    int arr[SIZE];
+    int head, direction, size;
+
+    printf("Enter the size of the disk queue: ");
+    scanf("%d", &size);
+
+    printf("Enter the elements of the disk queue: ");
+    for (int i = 0; i < size; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    printf("Enter the initial head position: ");
+    scanf("%d", &head);
+
+    printf("Enter the direction (0 for left, 1 for right): ");
+    scanf("%d", &direction);
+
+    scan(arr, head, direction, size);
+
+    return 0;
+}
