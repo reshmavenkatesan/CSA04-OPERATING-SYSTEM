@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_TRACKS 100
+
+void fcfs(int tracks[], int n, int head) {
+    int seek_count = 0;
+    int distance;
+
+    printf("Seek Sequence is: \n");
+
+    for (int i = 0; i < n; i++) {
+        printf("%d -> ", tracks[i]);
+        distance = abs(tracks[i] - head);
+        seek_count += distance;
+        head = tracks[i];
+    }
+
+    printf("\nTotal number of seek operations = %d\n", seek_count);
+}
+
+int main() {
+    int tracks[MAX_TRACKS];
+    int n;
+    int head;
+
+    printf("Enter the number of tracks: ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n > MAX_TRACKS) {
+        printf("Invalid number of tracks.\n");
+        return 1;
+    }
+
+    printf("Enter the track positions:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &tracks[i]);
+    }
+
+    printf("Enter the initial position of head: ");
+    scanf("%d", &head);
+
+    fcfs(tracks, n, head);
+
+    return 0;
+}
