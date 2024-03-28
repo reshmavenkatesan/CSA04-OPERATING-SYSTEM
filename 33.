@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_FRAMES 100
+#define MAX_PAGES 100
+
+int frames[MAX_FRAMES];
+int pages[MAX_PAGES];
+int page_faults = 0;
+int num_frames, num_pages;
+
+void initialize() {
+    page_faults = 0;
+    for (int i = 0; i < MAX_FRAMES; i++)
+        frames[i] = -1;
+}
+
+bool isInMemory(int page) {
+    for (int i = 0; i < num_frames; i++) {
+        if (frames[i] == page)
+            return true;
+    }
+    return false;
+}
+
+int getPageToReplace(int index) {
+    int farthest = index;
+    int farthestUsed = -1;
+    for (int i = 0; i < num_frames; i++) {
+        int j;
+        for (j = index + 1; j < num_pages; j++) {
+            if (frames[i] == pages[j]) {
+                if (j > farthestUsed) {
+                    farthest = i;
+                    farthestUsed = j;
+                }
+                break;
+            }
+        }
+        if (j == num_pages)
+            return i;
+    }
+    return farthest;
+}
+
+void optimalPageReplacement() {
+    initialize();
+
+    for (int i = 0; i < num_pages; i++) {
+        if (!isInMemory(pages[i])) {
+            int j = getPageToReplace(i);
+            frames[j] = pages[i];
+            page_faults++;
+            printf("Page %d is loaded into Frame %d\n", pages[i], j);
+        }
+        printf("Frames: ");
+        for (int j = 0; j < num_frames; j++) {
+            if (frames[j] == -1)
+                printf("- ");
+            else
+                printf("%d ", frames[j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    printf("Enter number of frames: ");
+    scanf("%d", &num_frames);
+    printf("Enter number of pages: ");
+    scanf("%d", &num_pages);
+
+    printf("Enter page reference string: ");
+    for (int i = 0; i < num_pages; i++)
+        scanf("%d", &pages[i]);
+
+    optimalPageReplacement();
+    printf("Total page faults: %d\n", page_faults);
+
+    return 0;
+}
