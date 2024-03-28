@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_RECORDS 100
+
+// Structure to represent a record
+typedef struct {
+    int data;
+} Record;
+
+// Function to initialize the file
+void initializeFile(Record file[], int num_records) {
+    for (int i = 0; i < num_records; i++) {
+        file[i].data = -1;  // Initializing data to -1 indicating empty record
+    }
+}
+
+// Function to add a record to the file
+void addRecord(Record file[], int num_records, int newData) {
+    int i;
+    for (i = 0; i < num_records; i++) {
+        if (file[i].data == -1) {  // Find the first empty record
+            file[i].data = newData; // Add new data to the record
+            break;
+        }
+    }
+    if (i == num_records) {
+        printf("Error: File is full. Cannot add more records.\n");
+    }
+}
+
+// Function to read all records in the file
+void readRecords(Record file[], int num_records) {
+    printf("Records in the file:\n");
+    for (int i = 0; i < num_records; i++) {
+        if (file[i].data != -1) {  // Print only non-empty records
+            printf("%d ", file[i].data);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    Record file[MAX_RECORDS];
+    int num_records;
+    
+    printf("Enter the number of records: ");
+    scanf("%d", &num_records);
+    
+    if (num_records > MAX_RECORDS || num_records <= 0) {
+        printf("Invalid number of records.\n");
+        return 1;
+    }
+    
+    initializeFile(file, num_records);
+
+    int choice, newData;
+    do {
+        printf("\n1. Add Record\n");
+        printf("2. Read Records\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        
+        switch(choice) {
+            case 1:
+                printf("Enter data for new record: ");
+                scanf("%d", &newData);
+                addRecord(file, num_records, newData);
+                break;
+            case 2:
+                readRecords(file, num_records);
+                break;
+            case 3:
+                printf("Exiting program.\n");
+                break;
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+    } while (choice != 3);
+
+    return 0;
+}
