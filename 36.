@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a disk block
+struct DiskBlock {
+    int data;
+    struct DiskBlock* next;
+};
+
+// Define the structure for a file
+struct File {
+    int file_id;
+    struct DiskBlock* start_block;
+    struct DiskBlock* end_block;
+};
+
+// Function to create a new disk block
+struct DiskBlock* createDiskBlock(int data) {
+    struct DiskBlock* block = (struct DiskBlock*)malloc(sizeof(struct DiskBlock));
+    if (block == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    block->data = data;
+    block->next = NULL;
+    return block;
+}
+
+// Function to create a new file
+struct File* createFile(int file_id) {
+    struct File* file = (struct File*)malloc(sizeof(struct File));
+    if (file == NULL) {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    file->file_id = file_id;
+    file->start_block = NULL;
+    file->end_block = NULL;
+    return file;
+}
+
+// Function to allocate a new block to a file
+void allocateBlock(struct File* file, int data) {
+    struct DiskBlock* new_block = createDiskBlock(data);
+    if (file->start_block == NULL) {
+        file->start_block = new_block;
+        file->end_block = new_block;
+    } else {
+        file->end_block->next = new_block;
+        file->end_block = new_block;
+    }
+}
+
+// Function to print the contents of a file
+void printFile(struct File* file) {
+    printf("File ID: %d\n", file->file_id);
+    printf("File Contents:\n");
+    struct DiskBlock* current_block = file->start_block;
+    while (current_block != NULL) {
+        printf("%d ", current_block->data);
+        current_block = current_block->next;
+    }
+    printf("\n");
+}
+
+// Function to deallocate the memory allocated for a file
+void deleteFile(struct File* file) {
+    struct DiskBlock* current_block = file->start_block;
+    struct DiskBlock* temp;
+    while (current_block != NULL) {
+        temp = current_block;
+        current_block = current_block->next;
+        free(temp);
+    }
+    free(file);
+}
+
+int main() {
+    // Create a file
+    struct File* my_file = createFile(1);
+
+    // Allocate blocks to the file
+    allocateBlock(my_file, 10);
+    allocateBlock(my_file, 20);
+    allocateBlock(my_file, 30);
+    allocateBlock(my_file, 40);
+
+    // Print the file contents
+    printFile(my_file);
+
+    // Deallocate the memory allocated for the file
+    deleteFile(my_file);
+
+    return 0;
+}
